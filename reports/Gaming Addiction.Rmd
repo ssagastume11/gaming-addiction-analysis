@@ -1,0 +1,291 @@
+---
+title: "Gaming Addiction"
+author: "Sergio E Sagastume"
+date: "2026-06-16"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(ggplot2)
+library(readr)
+library(dplyr)
+library(tidyr)
+library(janitor)
+```
+
+## Introduction
+
+This analysis investigates gaming behavior, screen-time habits, lifestyle factors, and psychological indicators associated with gaming addiction. The goal is to identify which gaming behaviors and personal characteristics are most strongly associated with higher levels of gaming addiction and to better understand how excessive gaming may affect productivity, mental health, and overall well-being.
+
+## Scenario
+
+I am acting as a data analyst examining gaming behavior and digital wellness trends. By analyzing gaming habits, mental health indicators, lifestyle factors, and productivity outcomes, I aim to identify patterns associated with gaming addiction and provide data-driven recommendations that support healthier gaming behaviors.
+
+## Ask
+
+**Business Task:** Determine which gaming behaviors and lifestyle factors are most strongly associated with higher levels of gaming addiction and explore how these patterns vary across demographic groups.
+
+### Key Questions
+
+* How do daily gaming hours relate to addiction scores?
+* Which gaming habits are most strongly associated with gaming addiction?
+* How do sleep, stress, and mental health indicators vary across addiction levels?
+* Are certain demographic groups more likely to exhibit higher addiction scores?
+* How does gaming addiction relate to productivity and performance outcomes?
+
+## Prepare
+
+**Data Source:** Gaming Addiction Dataset from Kaggle.
+
+**Dataset Provider:** Ajit Ashwath
+
+**Dataset URL:** https://www.kaggle.com/datasets/ajitashwath/gaming-addiction-dataset
+
+The dataset contains information on gaming habits, psychological indicators, productivity metrics, lifestyle factors, and addiction-related measures.
+
+```{r load-data}
+
+gaming_raw <- read_csv("gaming_addiction.csv")
+
+glimpse(gaming_raw)
+
+summary(gaming_raw)
+
+```
+
+## Process
+
+```{r process-data}
+
+gaming_clean <- gaming_raw %>%
+  clean_names() %>%
+  distinct()
+
+gaming_clean <- gaming_clean %>%
+  mutate(
+    subscription_status =
+      replace_na(subscription_status, "Unknown"),
+
+    addiction_severity =
+      replace_na(addiction_severity, "Unknown"),
+
+    depression_indicator =
+      replace_na(depression_indicator, "Unknown")
+  )
+
+gaming_clean <- gaming_clean %>%
+  filter(!is.na(gpa_or_performance_score))
+
+gaming_processed <- gaming_clean %>%
+  mutate(
+    age_group = case_when(
+      age < 18 ~ "Under 18",
+      age >= 18 & age <= 24 ~ "18-24",
+      age >= 25 & age <= 34 ~ "25-34",
+      age >= 35 & age <= 44 ~ "35-44",
+      TRUE ~ "45+"
+    ),
+
+    gaming_intensity = case_when(
+      daily_playtime_hours < 2 ~ "Low",
+      daily_playtime_hours < 4 ~ "Moderate",
+      daily_playtime_hours < 6 ~ "High",
+      TRUE ~ "Very High"
+    ),
+
+    sleep_category = case_when(
+      sleep_hours < 6 ~ "Poor Sleep",
+      sleep_hours < 8 ~ "Adequate Sleep",
+      TRUE ~ "Healthy Sleep"
+    )
+  )
+
+glimpse(gaming_processed)
+
+```
+
+## Analyze
+
+```{r analysis}
+
+severity_summary <- gaming_processed %>%
+  group_by(addiction_severity) %>%
+  summarise(
+    avg_addiction_score =
+      mean(addiction_score, na.rm = TRUE),
+
+    avg_daily_playtime =
+      mean(daily_playtime_hours, na.rm = TRUE),
+
+    avg_sleep_hours =
+      mean(sleep_hours, na.rm = TRUE),
+
+    avg_stress_score =
+      mean(stress_score, na.rm = TRUE),
+
+    avg_productivity_drop =
+      mean(productivity_drop_percent, na.rm = TRUE),
+
+    total_users = n(),
+    .groups = "drop"
+  )
+
+severity_summary
+
+```
+
+### Addiction Score Distribution
+
+```{r addiction-distribution}
+
+ggplot(
+  gaming_processed,
+  aes(x = addiction_score)
+) +
+  geom_histogram(bins = 20) +
+  labs(
+    title = "Distribution of Gaming Addiction Scores",
+    x = "Addiction Score",
+    y = "Number of Users",
+    caption = "Source: Gaming Addiction Dataset (Kaggle, Ajit Ashwath)"
+  ) +
+  theme_minimal()
+
+```
+
+### Daily Gaming Hours vs Addiction Score
+
+```{r gaming-hours-vs-addiction}
+
+ggplot(
+  gaming_processed,
+  aes(
+    x = daily_playtime_hours,
+    y = addiction_score
+  )
+) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm") +
+  labs(
+    title = "Daily Gaming Hours vs Addiction Score",
+    x = "Daily Gaming Hours",
+    y = "Addiction Score",
+    caption = "Source: Gaming Addiction Dataset (Kaggle, Ajit Ashwath)"
+  ) +
+  theme_minimal()
+
+```
+
+### Sleep Hours by Addiction Severity
+
+```{r sleep-hours-analysis}
+
+ggplot(
+  gaming_processed,
+  aes(
+    x = addiction_severity,
+    y = sleep_hours
+  )
+) +
+  geom_boxplot() +
+  labs(
+    title = "Sleep Hours by Addiction Severity",
+    x = "Addiction Severity",
+    y = "Sleep Hours",
+    caption = "Source: Gaming Addiction Dataset (Kaggle, Ajit Ashwath)"
+  ) +
+  theme_minimal()
+
+```
+
+### Mental Health Risk by Addiction Severity
+
+```{r mental-health-analysis}
+
+ggplot(
+  gaming_processed,
+  aes(
+    x = addiction_severity,
+    y = mental_health_risk_score
+  )
+) +
+  geom_boxplot() +
+  labs(
+    title = "Mental Health Risk by Addiction Severity",
+    x = "Addiction Severity",
+    y = "Mental Health Risk Score",
+    caption = "Source: Gaming Addiction Dataset (Kaggle, Ajit Ashwath)"
+  ) +
+  theme_minimal()
+
+```
+
+## Share
+
+This report communicates the relationship between gaming addiction, gaming habits, lifestyle factors, and mental health indicators through statistical summaries and visualizations. The charts highlight trends in addiction severity, gaming intensity, sleep habits, and mental health risk, allowing stakeholders to better understand factors associated with gaming addiction and digital well-being.
+
+### Key Findings
+
+* Higher gaming hours tend to be associated with higher addiction scores.
+* Sleep patterns vary across addiction severity levels.
+* Mental health risk scores generally increase alongside addiction severity.
+* Productivity outcomes appear to decline among users with higher addiction indicators.
+* Lifestyle factors such as exercise and social interaction may influence addiction outcomes.
+
+## Act
+
+```{r act-phase}
+
+recommendation_summary <- gaming_processed %>%
+  group_by(addiction_severity) %>%
+  summarise(
+    avg_daily_playtime =
+      mean(daily_playtime_hours, na.rm = TRUE),
+
+    avg_sleep_hours =
+      mean(sleep_hours, na.rm = TRUE),
+
+    avg_productivity_drop =
+      mean(productivity_drop_percent, na.rm = TRUE),
+
+    avg_mental_health_risk =
+      mean(mental_health_risk_score, na.rm = TRUE),
+
+    total_users = n(),
+    .groups = "drop"
+  )
+
+recommendation_summary
+
+```
+
+### Recommendations
+
+1. **Promote Healthy Gaming Time Management**
+   Encourage balanced gaming schedules and regular breaks to reduce excessive gaming behavior.
+
+2. **Support Better Sleep Habits**
+   Educate gamers about the importance of sleep and reducing late-night gaming sessions.
+
+3. **Monitor Mental Health Indicators**
+   Track stress, anxiety, loneliness, and emotional well-being among frequent gamers to identify potential warning signs.
+
+4. **Encourage Physical Activity and Social Interaction**
+   Promote healthy lifestyle habits that may help reduce addiction risk and improve overall well-being.
+
+5. **Develop Early Intervention Programs**
+   Use behavioral indicators such as high gaming hours, declining performance, and increased stress to identify individuals who may benefit from additional support.
+
+6. **Leverage Data for Digital Wellness Initiatives**
+   Organizations can use these insights to create programs that encourage healthier technology use and responsible gaming behaviors.
+
+## Conclusion
+
+This analysis identified several behavioral, lifestyle, and psychological factors associated with gaming addiction. By examining gaming habits alongside productivity, sleep, and mental health indicators, the project provides valuable insights that can support healthier gaming behaviors, improve digital well-being, and inform future research into gaming addiction and its impacts.
+
+```
+```
