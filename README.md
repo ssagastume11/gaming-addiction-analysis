@@ -142,50 +142,40 @@ These visualizations help explain how gaming behavior, lifestyle habits, and psy
 
 ### 🎮 Distribution of Gaming Addiction Scores
 
-![Gaming Addiction Score by Age Group](https://raw.githubusercontent.com/ssagastume11/gaming-addiction-analysis/refs/heads/main/visuals/average_addiction_score_by_age_group.png)
+![Average Addiction Score by Age Group](https://raw.githubusercontent.com/ssagastume11/gaming-addiction-analysis/refs/heads/main/outputs/charts/average_addiction_score_by_age_group.png)
 
 ```
-visuals/addiction_score_distribution.png
+outputs/charts/average_addiction_score_by_age_group.png
 ```
 
 ---
 
 ### ⏱️ Daily Gaming Hours vs. Addiction Score
 
-*Insert image here*
+![Daily Gaming Hours vs Addiction Score](https://raw.githubusercontent.com/ssagastume11/gaming-addiction-analysis/refs/heads/main/outputs/charts/daily_gaming_hours_vs_addiction_score.png)
 
 ```
-visuals/daily_gaming_hours_vs_addiction_score.png
+outputs/charts/daily_gaming_hours_vs_addiction_score.png
 ```
 
 ---
 
 ### 😴 Sleep Hours by Addiction Severity
 
-*Insert image here*
+![Sleep Hours by Addiction Severity](https://raw.githubusercontent.com/ssagastume11/gaming-addiction-analysis/refs/heads/main/outputs/charts/sleep_hours_by_addiction_severity.png)
 
 ```
-visuals/sleep_hours_by_addiction_severity.png
+outputs/charts/sleep_hours_by_addiction_severity.png
 ```
 
 ---
 
 ### 🧠 Mental Health Risk by Addiction Severity
 
-*Insert image here*
+![Mental Health Risk by Addiction Severity](https://raw.githubusercontent.com/ssagastume11/gaming-addiction-analysis/refs/heads/main/outputs/charts/mental_health_risk_by_addiction_severity.png)
 
 ```
-visuals/mental_health_risk_by_addiction_severity.png
-```
-
----
-
-### 👥 Addiction Score by Age Group
-
-*Insert image here*
-
-```
-visuals/addiction_score_by_age_group.png
+outputs/charts/mental_health_risk_by_addiction_severity.png
 ```
 
 ---
